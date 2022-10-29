@@ -1,0 +1,10 @@
+/venv
+testing.py
+/.gitignore
+/.idea/csv-plugin.xml
+/.idea/decision_tree.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
