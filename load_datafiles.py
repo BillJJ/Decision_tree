@@ -5,8 +5,7 @@ from sklearn.preprocessing import OrdinalEncoder
 pd.set_option('display.max_columns', None)
 
 """
-loading data into X_train, X_test, y_train, y_test;
-unless there is no y_test (titanic)
+loading data into X, y, and x_test (if applicable);
 """
 
 def load_titanic():
@@ -31,7 +30,6 @@ def load_mushroom():
     df = pd.DataFrame(enc.fit_transform(df))
     df.columns = columns
 
-    X, test_X, y, test_y = train_test_split(df.drop('class', axis=1), df['class'], test_size=0.2)
-    return X, test_X, y, test_y
+    return df.drop('class', axis=1), df['class']
 
 load_mushroom()

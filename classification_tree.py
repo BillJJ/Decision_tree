@@ -104,3 +104,10 @@ class ClassificationTree():
         for index, row in X.iterrows():
             preds[index] = self.classify(row, self.root)
         return preds
+
+    def score(self, X, y, sample_weights=None):
+        preds = self.predict(X)
+        return (preds==y).sum()/len(y)
+
+    def get_params(self, deep=False):
+        return {'min_samples':self.min_samples, 'max_depth':self.max_depth}
