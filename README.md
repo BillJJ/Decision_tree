@@ -2,7 +2,10 @@
 
 Classification decision tree written from scratch (well, using pandas).
 
-Currently only have titanic dataset (77% accuracy on test dataset)
+Datasets:
+- titanic
+- mushroom (100% accuracy, just a bit of overfitting)
+- iris
 
 to do:
 - optimize for big datasets / categorical data (limit classes / unique threshold splits)
