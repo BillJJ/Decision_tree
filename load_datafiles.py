@@ -51,3 +51,14 @@ def load_iris():
     X = df.drop('Species', axis=1)
 
     return X, y
+
+def load_breast():
+    df = pd.read_csv('datafiles/breastcancer.csv')
+    df.drop('id',axis=1,inplace=True)
+
+    cols = df.columns
+    enc = LabelEncoder()
+    df['diagnosis'] = pd.DataFrame(enc.fit_transform(df['diagnosis']))
+    df.columns = cols
+
+    return df.drop('diagnosis', axis=1), df['diagnosis']

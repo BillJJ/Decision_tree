@@ -1,8 +1,9 @@
 import random
-
 import numpy as np
 import pandas as pd
 import pygraphviz
+from math import ceil, sqrt
+
 
 class Node:
     def __init__(self, split_feature=None, thres=None, left=None, right=None, gain=None, classification=None, samples=None, impurity=None):
@@ -43,12 +44,19 @@ class ClassificationTree():
         # X, y, num of samples, number of features (# of X columns)
         split = {'gain':0, 'split_feature':None, 'thres':None}
 
+
+
         # for each feature in X
         # iterate over all unique vals in that col and split by that val
         for feature in X:
             vals_unique = X[feature].unique()
             vals_unique.sort()
-            for thres in vals_unique: # if time complexity too high, limit here to some number
+
+            # if it's random, don't loop thru all, randomly pick a few and choose the best
+            if self.split_type != "best":
+                vals_unique = np.random.choice(vals_unique, ceil(sqrt(len(vals_unique))), replace=False)
+
+            for thres in vals_unique:
                 # split by threshold
                 left_X, left_y, right_X, right_y = self.split_dataset(X, y, feature, thres)
 
@@ -85,7 +93,7 @@ class ClassificationTree():
 
                 # if not left child and right child both leaf nodes with same classification
                 if left.classification==None or left.classification != None and right.classification != left.classification:
-                    return Node(split['split_feature'],split['thres'],left,right,split['gain'])
+                    return Node(split['split_feature'],split['thres'],left,right,split['gain'],samples=y.value_counts().values)
                 # otherwise just make this a leaf node with same label as children
 
         # if doesn't meet the requirements OR doesn't gain from splitting, become the LEAF
@@ -96,7 +104,10 @@ class ClassificationTree():
 
     # all vals must be numbers
     # well actually all panda DataFrames
-    def fit(self, X, y):
+    def fit(self, X, y, split_type="best"):
+        # split_type either loop thru all, or randomly go sqrt(unique) and choose best one
+        self.split_type = split_type
+
         self.y_dtype = y.dtype
         self.root = self.build_tree(X, y, 1)
 
@@ -131,7 +142,7 @@ class ClassificationTree():
             label = f"{node.classification}\n{round(node.impurity, 3)}\n{node.samples.values}"
             self.g.add_node(i, label=label, style='filled', fillcolor=self.classes[node.classification])
         else:
-            label = f"{node.split_feature} <= {node.thres}"
+            label = f"{node.split_feature} <= {node.thres}\n{node.samples}"
             self.g.add_node(i, label=label)
 
             if node.left:
