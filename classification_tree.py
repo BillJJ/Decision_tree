@@ -44,8 +44,6 @@ class ClassificationTree():
         # X, y, num of samples, number of features (# of X columns)
         split = {'gain':0, 'split_feature':None, 'thres':None}
 
-
-
         # for each feature in X
         # iterate over all unique vals in that col and split by that val
         for feature in X:
