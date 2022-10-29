@@ -3,6 +3,7 @@
 Classification decision tree written from scratch (well, using pandas).
 
 Datasets:
+- breast cancer diagnosis
 - titanic
 - mushroom (100% accuracy, just a bit of overfitting)
 - iris
