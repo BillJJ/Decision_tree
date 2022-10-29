@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pygraphviz
 
 class Node:
     def __init__(self, split_feature=None, thres=None, left=None, right=None, gain=None, classification=None, samples=None, impurity=None):
@@ -111,3 +112,31 @@ class ClassificationTree():
 
     def get_params(self, deep=False):
         return {'min_samples':self.min_samples, 'max_depth':self.max_depth}
+
+    def set_params(self, min_samples=2, max_depth=2):
+        self.min_samples = min_samples
+        self.max_depth=max_depth
+
+    def _visualize(self, node, i):
+        if node.classification != None:
+            self.g.add_node(i, label=node.classification)
+        else:
+            label = f"{node.split_feature} <= {node.thres}"
+            self.g.add_node(i, label=label)
+
+            if node.left:
+                self._visualize(node.left, i*2)
+                self.g.add_edge(i, i*2)
+            if node.right:
+                self._visualize(node.right, i*2+1)
+                self.g.add_edge(i, i*2+1)
+
+
+    def visualize(self, filename:str):
+        self.g = pygraphviz.AGraph(directed=True)
+        self.g.node_attr['shape'] = "box"
+
+        self._visualize(self.root, 1)
+
+        self.g.layout('dot')
+        self.g.draw(filename)
