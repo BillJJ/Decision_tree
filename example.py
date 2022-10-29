@@ -8,9 +8,9 @@ from classification_tree import ClassificationTree
 
 X, y, test = load_titanic()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-model = ClassificationTree(min_samples=10, max_depth=20)
+model = ClassificationTree(min_samples=5, max_depth=20)
 
 model.fit(X_train, y_train)
 

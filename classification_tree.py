@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import pandas as pd
 import pygraphviz
@@ -18,6 +20,7 @@ class ClassificationTree():
     def __init__(self, max_depth=10, min_samples=3):
         self.max_depth = max_depth # max_depth = # of splits, not height
         self.min_samples = min_samples
+        self.classes = dict()
 
     def split_dataset(self, X, y, feature, thres):
         # splits dataset into left_X, left_y, right_X, right_y
@@ -79,11 +82,17 @@ class ClassificationTree():
                 # split into left and right child nodes
                 left = self.build_tree(split["left_X"], split['left_y'], depth+1)
                 right = self.build_tree(split["right_X"],split['right_y'],depth+1)
-                return Node(split['split_feature'],split['thres'],left,right,split['gain'])
+
+                # if not left child and right child both leaf nodes with same classification
+                if left.classification==None or left.classification != None and right.classification != left.classification:
+                    return Node(split['split_feature'],split['thres'],left,right,split['gain'])
+                # otherwise just make this a leaf node with same label as children
 
         # if doesn't meet the requirements OR doesn't gain from splitting, become the LEAF
         # classification, sample distribution, and gini impurity
-        return Node(classification=(y.mode().iloc[0]), samples=y.value_counts(), impurity=self.gini(y))
+        label = y.mode().iloc[0]
+        self.classes[label] = 0
+        return Node(classification=(label), samples=y.value_counts(), impurity=self.gini(y))
 
     # all vals must be numbers
     # well actually all panda DataFrames
@@ -119,7 +128,8 @@ class ClassificationTree():
 
     def _visualize(self, node, i):
         if node.classification != None:
-            self.g.add_node(i, label=node.classification)
+            label = f"{node.classification}\n{round(node.impurity, 3)}\n{node.samples.values}"
+            self.g.add_node(i, label=label, style='filled', fillcolor=self.classes[node.classification])
         else:
             label = f"{node.split_feature} <= {node.thres}"
             self.g.add_node(i, label=label)
@@ -136,7 +146,12 @@ class ClassificationTree():
         self.g = pygraphviz.AGraph(directed=True)
         self.g.node_attr['shape'] = "box"
 
+        # colour scheme
+        self.g.node_attr['colorscheme']='accent8'
+        for c in enumerate(self.classes):
+            self.classes[c[1]] = c[0]+1
+
         self._visualize(self.root, 1)
 
-        self.g.layout('dot')
+        self.g.layout(prog='dot')
         self.g.draw(filename)
