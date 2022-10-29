@@ -17,3 +17,4 @@ to do:
 - ~~add more example datasets~~
 - make regression tree
 - make random forest
+- add example trees for each dataset
