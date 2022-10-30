@@ -89,4 +89,4 @@ def load_spaceship_titanic():
 
 def load_mobile_price():
     df = pd.read_csv('datafiles/mobile-price/train.csv')
-    print(df)
+    return df.drop('price_range',axis=1), df['price_range']
