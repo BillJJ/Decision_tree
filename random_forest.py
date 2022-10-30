@@ -37,7 +37,6 @@ class ClassificationForest():
 
         return preds
 
-
     def score(self, X, y):
         preds = self.predict(X)
         return (y==preds).sum()/len(y)

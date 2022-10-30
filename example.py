@@ -20,7 +20,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = ClassificationForest(n_estimators=10, max_depth=8)
 model.fit(X_train, y_train)
 print(model.score(X_test, y_test))
-
+print()
 # preds = model.predict(test)
 # preds = preds.tolist()
 # for i in range(len(preds)):
