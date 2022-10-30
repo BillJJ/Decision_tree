@@ -1,6 +1,6 @@
 /testing.py
 /.gitignore
-
+*
 /.idea/csv-plugin.xml
 /.idea/decision_tree.iml
 /.idea/misc.xml
