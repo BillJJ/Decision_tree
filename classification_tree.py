@@ -1,4 +1,6 @@
 import random
+import sys
+
 import numpy as np
 import pandas as pd
 import pygraphviz
@@ -51,7 +53,7 @@ class ClassificationTree():
             vals_unique.sort()
 
             # if it's random, don't loop thru all, randomly pick a few and choose the best
-            if self.split_type != "best":
+            if self.split_type != "best" and len(vals_unique) > self.random_split_thres:
                 vals_unique = np.random.choice(vals_unique, ceil(sqrt(len(vals_unique))), replace=False)
 
             for thres in vals_unique:
@@ -91,20 +93,21 @@ class ClassificationTree():
 
                 # if not left child and right child both leaf nodes with same classification
                 if left.classification==None or left.classification != None and right.classification != left.classification:
-                    return Node(split['split_feature'],split['thres'],left,right,split['gain'],samples=y.value_counts().values)
+                    return Node(split['split_feature'],split['thres'],left,right,split['gain'],samples=y.value_counts().sort_index().values)
                 # otherwise just make this a leaf node with same label as children
 
         # if doesn't meet the requirements OR doesn't gain from splitting, become the LEAF
         # classification, sample distribution, and gini impurity
         label = y.mode().iloc[0]
         self.classes[label] = 0
-        return Node(classification=(label), samples=y.value_counts(), impurity=self.gini(y))
+        return Node(classification=(label), samples=y.value_counts().sort_index(), impurity=self.gini(y))
 
     # all vals must be numbers
     # well actually all panda DataFrames
-    def fit(self, X, y, split_type="best"):
+    def fit(self, X, y, split_type="best", random_split_thres=10):
         # split_type either loop thru all, or randomly go sqrt(unique) and choose best one
         self.split_type = split_type
+        self.random_split_thres=random_split_thres # min len(unique vars in feature) to warrant a random sqrt divide
 
         self.y_dtype = y.dtype
         self.root = self.build_tree(X, y, 1)
@@ -152,6 +155,12 @@ class ClassificationTree():
 
 
     def visualize(self, filename:str):
+        try:
+            self.root
+        except AttributeError:
+            sys.stderr.write('Tree has not been fitted')
+            return
+
         self.g = pygraphviz.AGraph(directed=True)
         self.g.node_attr['shape'] = "box"
 

@@ -62,3 +62,31 @@ def load_breast():
     df.columns = cols
 
     return df.drop('diagnosis', axis=1), df['diagnosis']
+
+def load_spaceship_titanic():
+    df = pd.read_csv('datafiles/spaceship-titanic/train.csv')
+    test = pd.read_csv('datafiles/spaceship-titanic/test.csv')
+
+    test_index = test['PassengerId']
+
+    for d in (df, test):
+        d.drop(['PassengerId', 'Name', 'Cabin'], axis=1, inplace=True)
+        d['Age'].fillna(d['Age'].mean(), inplace=True)
+
+    enc = OrdinalEncoder()
+    df = pd.DataFrame(enc.fit_transform(df), columns=df.columns)
+
+    df.fillna(-1, inplace=True)
+
+    X = df.drop('Transported', axis=1)
+    y = df['Transported']
+
+
+    test = pd.DataFrame(enc.fit_transform(test), columns=test.columns)
+    test.fillna(-1, inplace=True)
+
+    return X,y,test, test_index
+
+def load_mobile_price():
+    df = pd.read_csv('datafiles/mobile-price/train.csv')
+    print(df)
