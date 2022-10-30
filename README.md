@@ -1,6 +1,7 @@
 # Decision_tree
 
 Classification decision tree written from scratch (well, using pandas).
+Random forest written in there too
 
 Datasets:
 - breast cancer diagnosis
@@ -16,5 +17,5 @@ to do:
 - ~~optimize for big datasets / categorical data (limit classes / unique threshold splits)~~
 - ~~add more example datasets~~
 - make regression tree
-- make random forest
+- ~~make random forest~~
 - add example trees for each dataset
